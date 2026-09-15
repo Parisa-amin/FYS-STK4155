@@ -2,7 +2,6 @@
 
 FYS-STK3155/4155, autumn 2026.
 
-Conventions follow the lecture notebooks; see CONVENTIONS.md.
 """
 
 import numpy as np
@@ -18,7 +17,7 @@ BLUE, RED, YELLOW, GREY, GREEN = "#004488", "#BB5566", "#DDAA33", "#777777", "#2
 def runge(x):
     """Runge's function f(x) = 1 / (1 + 25 x^2)."""
     # TODO: one line.
-    raise NotImplementedError
+    return 1 / (1 + 25 * x**2)
 
 
 def make_data(n=100, sigma=0.1, seed=2026, uniform=True):

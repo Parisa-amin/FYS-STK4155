@@ -6,7 +6,6 @@ FYS-STK3155/4155, autumn 2026.
 
 import numpy as np
 
-# Paul Tol's colourblind-safe palette, as used in the weekly slides
 BLUE, RED, YELLOW, GREY, GREEN = "#004488", "#BB5566", "#DDAA33", "#777777", "#228833"
 
 
@@ -38,12 +37,16 @@ def make_data(n=100, sigma=0.1, seed=2026, uniform=True):
     -------
     x, y : ndarray of shape (n,)
     """
-    rng = np.random.default_rng(seed)
-    # TODO:
-    #   1. build x -- rng.uniform(...) if uniform, else np.linspace(...)
-    #   2. y = runge(x) + sigma * rng.standard_normal(n)
-    #   3. return x, y
-    raise NotImplementedError
+    rng= np.random.default_rng(seed)
+
+    if uniform:
+        x=rng.uniform(-1, 1, n)
+    else:
+        x=np.linspace(-1, 1, n)
+
+    y= runge(x) + sigma * rng.standard_normal(n)
+    return x, y
+    
 
 
 # ---------------------------------------------------------------------------
@@ -57,11 +60,12 @@ def polynomial_features(x, degree, intercept=False):
     matrix has ``degree + 1`` columns.  With ``intercept=False`` the constant
     column is dropped, leaving ``degree`` columns -- the form we want when the
     data have been centred.
-    """
-    # TODO: np.vander(x, degree + 1, increasing=True), then drop column 0
-    #       if intercept is False.
-    raise NotImplementedError
-
+    """ 
+    X= np.vander(x, degree + 1, increasing=True)
+    if not intercept:
+        X= X[:, 1:]
+    return X
+   
 
 # ---------------------------------------------------------------------------
 # Step 3: the metrics
@@ -69,14 +73,16 @@ def polynomial_features(x, degree, intercept=False):
 
 def MSE(y_data, y_model):
     """Mean squared error."""
-    # TODO
-    raise NotImplementedError
+    
+    return np.mean((y_data - y_model)**2 )
 
 
 def R2(y_data, y_model):
     """The R^2 score."""
-    # TODO
-    raise NotImplementedError
+    numerator = np.sum (( y_data - y_model)**2)
+    denominator= np.sum((y_data - np.mean(y_data))**2)
+
+    return 1- numerator/denominator 
 
 
 # ---------------------------------------------------------------------------
@@ -89,5 +95,4 @@ def ols(X, y):
     The project asks explicitly for our own code here, using ``np.linalg.pinv``
     or the SVD, rather than scikit-learn.
     """
-    # TODO: np.linalg.pinv(X) @ y
-    raise NotImplementedError
+    return np.linalg.pinv(X) @ y

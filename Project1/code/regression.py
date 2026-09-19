@@ -20,23 +20,7 @@ def runge(x):
 
 
 def make_data(n=100, sigma=0.1, seed=2026, uniform=True):
-    """Sample Runge's function on [-1, 1] and add N(0, sigma^2) noise.
-
-    Parameters
-    ----------
-    n : int
-        Number of data points.
-    sigma : float
-        Standard deviation of the noise.
-    seed : int
-        Seed for the random number generator.
-    uniform : bool
-        If True draw x uniformly on [-1, 1]; if False use a fixed step size.
-
-    Returns
-    -------
-    x, y : ndarray of shape (n,)
-    """
+   
     rng= np.random.default_rng(seed)
 
     if uniform:
@@ -54,13 +38,7 @@ def make_data(n=100, sigma=0.1, seed=2026, uniform=True):
 # ---------------------------------------------------------------------------
 
 def polynomial_features(x, degree, intercept=False):
-    """Vandermonde design matrix in x.
-
-    With ``intercept=True`` the columns are [1, x, x^2, ..., x^degree] and the
-    matrix has ``degree + 1`` columns.  With ``intercept=False`` the constant
-    column is dropped, leaving ``degree`` columns -- the form we want when the
-    data have been centred.
-    """ 
+    
     X= np.vander(x, degree + 1, increasing=True)
     if not intercept:
         X= X[:, 1:]
@@ -90,11 +68,7 @@ def R2(y_data, y_model):
 # ---------------------------------------------------------------------------
 
 def ols(X, y):
-    """OLS coefficients via the pseudoinverse / SVD.
-
-    The project asks explicitly for our own code here, using ``np.linalg.pinv``
-    or the SVD, rather than scikit-learn.
-    """
+ 
     return np.linalg.pinv(X) @ y
 
 
@@ -105,16 +79,7 @@ def ols(X, y):
 # ---------------------------------------------------------------------------
 
 def fit_predict(x_train, x_test, y_train, degree, lam=0.0):
-    """Build features, scale on the training set, fit OLS/Ridge, and predict.
-
-    Eq. (3.44) with the 1/n convention of Eq. (3.95): the cost function is
-    (1/n)||X theta - y||^2 + lambda ||theta||^2, so the normal equations pick
-    up a factor n on the ridge term.
-
-    Returns
-    -------
-    y_train_pred, y_test_pred, theta
-    """
+    
     X_train= polynomial_features(x_train, degree)
     X_test= polynomial_features(x_test, degree)
 
@@ -147,8 +112,3 @@ def fit_predict(x_train, x_test, y_train, degree, lam=0.0):
     y_test_pred = X_test_scaled @ theta + y_mean
 
     return y_train_pred, y_test_pred , theta
-
-
-
-
-

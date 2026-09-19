@@ -112,3 +112,20 @@ def fit_predict(x_train, x_test, y_train, degree, lam=0.0):
     y_test_pred = X_test_scaled @ theta + y_mean
 
     return y_train_pred, y_test_pred , theta
+
+
+
+#-----------------------------------------------------------------------
+#Ridge 
+#------------------------------------------------------------------
+def ridge( X, y, lam):
+
+    n= X.shape[0]
+
+    I= np.eye(X.shape[1])
+
+    theta= np.linalg.solve(X.T @ X + lam * n * I, X.T @ y)
+
+    return theta
+
+  

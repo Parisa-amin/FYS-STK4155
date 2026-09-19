@@ -104,7 +104,7 @@ def ols(X, y):
 # step 5: Build polynomial features, scale, fit OLS/Ridge, and predict.
 # ---------------------------------------------------------------------------
 
-def fit_predict(x_train, x_test, y_train, y_test, degree, lam=0.0):
+def fit_predict(x_train, x_test, y_train, degree, lam=0.0):
 
     X_train= polynomial_features(x_train, degree)
     X_test= polynomial_features(x_test, degree)

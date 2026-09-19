@@ -96,3 +96,53 @@ def ols(X, y):
     or the SVD, rather than scikit-learn.
     """
     return np.linalg.pinv(X) @ y
+
+
+
+
+# ---------------------------------------------------------------------------
+# step 5: Build polynomial features, scale, fit OLS/Ridge, and predict.
+# ---------------------------------------------------------------------------
+
+def fit_predict(x_train, x_test, y_train, y_test, degree, lam=0.0):
+
+    X_train= polynomial_features(x_train, degree)
+    X_test= polynomial_features(x_test, degree)
+
+
+    X_mean= np.mean(X_train, axis=0)
+    X_std= np.std(X_train, axis=0)
+
+
+    X_train_scaled= (X_train - X_mean) / X_std
+    X_test_scaled= (X_test - X_mean) / X_std
+
+    #center y using the training mean
+    y_mean= np.mean(y_train)
+    y_train_centered= y_train - y_mean
+
+    if lam == 0.0:
+        #OLS
+        theta= ols(X_train_scaled, y_train_centered)
+    else:
+        I= np.eye(X_train_scaled.shape[1])
+
+        theta = (
+            np.linalg.pinv(
+                X_train_scaled.T @ X_train_scaled + lam * I
+            )
+            @ X_train_scaled.T
+            @ y_train_centered
+        )
+
+
+    #predict and return to the original y 
+    y_train_pred = X_train_scaled @ theta + y_mean
+    y_test_pred = X_test_scaled @ theta + y_mean
+
+    return y_train_pred, y_test_pred , theta
+
+
+
+
+

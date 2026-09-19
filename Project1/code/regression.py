@@ -6,6 +6,7 @@ FYS-STK3155/4155, autumn 2026.
 
 import numpy as np
 
+# Paul Tol's colourblind-safe palette, as used in the weekly slides
 BLUE, RED, YELLOW, GREY, GREEN = "#004488", "#BB5566", "#DDAA33", "#777777", "#228833"
 
 
@@ -15,7 +16,6 @@ BLUE, RED, YELLOW, GREY, GREEN = "#004488", "#BB5566", "#DDAA33", "#777777", "#2
 
 def runge(x):
     """Runge's function f(x) = 1 / (1 + 25 x^2)."""
-    # TODO: one line.
     return 1 / (1 + 25 * x**2)
 
 
@@ -105,7 +105,16 @@ def ols(X, y):
 # ---------------------------------------------------------------------------
 
 def fit_predict(x_train, x_test, y_train, degree, lam=0.0):
+    """Build features, scale on the training set, fit OLS/Ridge, and predict.
 
+    Eq. (3.44) with the 1/n convention of Eq. (3.95): the cost function is
+    (1/n)||X theta - y||^2 + lambda ||theta||^2, so the normal equations pick
+    up a factor n on the ridge term.
+
+    Returns
+    -------
+    y_train_pred, y_test_pred, theta
+    """
     X_train= polynomial_features(x_train, degree)
     X_test= polynomial_features(x_test, degree)
 
@@ -125,14 +134,11 @@ def fit_predict(x_train, x_test, y_train, degree, lam=0.0):
         #OLS
         theta= ols(X_train_scaled, y_train_centered)
     else:
-        I= np.eye(X_train_scaled.shape[1])
+        n, p = X_train_scaled.shape
 
-        theta = (
-            np.linalg.pinv(
-                X_train_scaled.T @ X_train_scaled + lam * I
-            )
-            @ X_train_scaled.T
-            @ y_train_centered
+        theta = np.linalg.solve(
+            X_train_scaled.T @ X_train_scaled + n * lam * np.eye(p),
+            X_train_scaled.T @ y_train_centered,
         )
 
 

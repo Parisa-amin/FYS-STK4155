@@ -68,64 +68,57 @@ def R2(y_data, y_model):
 # ---------------------------------------------------------------------------
 
 def ols(X, y):
- 
     return np.linalg.pinv(X) @ y
 
 
+# Step 5: Ridge
+def ridge(X, y, lam):
+    n = X.shape[0]
+    p = X.shape[1]
+
+    I = np.eye(p)
+
+    theta = np.linalg.solve(
+        X.T @ X + n * lam * I,
+        X.T @ y
+    )
+
+    return theta
 
 
-# ---------------------------------------------------------------------------
-# step 5: Build polynomial features, scale, fit OLS/Ridge, and predict.
-# ---------------------------------------------------------------------------
-
+# Step 6: build features, scale, fit, predict
 def fit_predict(x_train, x_test, y_train, degree, lam=0.0):
-    
-    X_train= polynomial_features(x_train, degree)
-    X_test= polynomial_features(x_test, degree)
 
+    X_train = polynomial_features(x_train, degree)
+    X_test = polynomial_features(x_test, degree)
 
-    X_mean= np.mean(X_train, axis=0)
-    X_std= np.std(X_train, axis=0)
+    X_mean = np.mean(X_train, axis=0)
+    X_std = np.std(X_train, axis=0)
 
+    X_train_scaled = (X_train - X_mean) / X_std
+    X_test_scaled = (X_test - X_mean) / X_std
 
-    X_train_scaled= (X_train - X_mean) / X_std
-    X_test_scaled= (X_test - X_mean) / X_std
-
-    #center y using the training mean
-    y_mean= np.mean(y_train)
-    y_train_centered= y_train - y_mean
+    y_mean = np.mean(y_train)
+    y_train_centered = y_train - y_mean
 
     if lam == 0.0:
-        #OLS
-        theta= ols(X_train_scaled, y_train_centered)
+        theta = ols(X_train_scaled, y_train_centered)
     else:
-        n, p = X_train_scaled.shape
-
-        theta = np.linalg.solve(
-            X_train_scaled.T @ X_train_scaled + n * lam * np.eye(p),
-            X_train_scaled.T @ y_train_centered,
+        theta = ridge(
+            X_train_scaled,
+            y_train_centered,
+            lam
         )
 
-
-    #predict and return to the original y 
     y_train_pred = X_train_scaled @ theta + y_mean
     y_test_pred = X_test_scaled @ theta + y_mean
 
-    return y_train_pred, y_test_pred , theta
+    return y_train_pred, y_test_pred, theta
 
 
 
-#-----------------------------------------------------------------------
-#Ridge 
-#------------------------------------------------------------------
-def ridge( X, y, lam):
 
-    n= X.shape[0]
 
-    I= np.eye(X.shape[1])
 
-    theta= np.linalg.solve(X.T @ X + lam * n * I, X.T @ y)
-
-    return theta
 
   

@@ -23,3 +23,6 @@ Thumbs.db
 
 # Editor
 .vscode/
+
+# Weekly exercises (kept locally, not part of the joint project)
+exercises/
